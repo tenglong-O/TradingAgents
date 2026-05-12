@@ -17,6 +17,9 @@ _ENV_OVERRIDES = {
     "TRADINGAGENTS_MAX_RISK_ROUNDS":      "max_risk_discuss_rounds",
     "TRADINGAGENTS_CHECKPOINT_ENABLED":   "checkpoint_enabled",
     "TRADINGAGENTS_BENCHMARK_TICKER":     "benchmark_ticker",
+    "TRADINGAGENTS_FEISHU_ENABLED":       "feishu_enabled",
+    "TRADINGAGENTS_FEISHU_WEBHOOK_URL":   "feishu_webhook_url",
+    "TRADINGAGENTS_FEISHU_SECRET":        "feishu_secret",
 }
 
 
@@ -118,4 +121,9 @@ DEFAULT_CONFIG = _apply_env_overrides({
         ".AX":  "^AXJO",    # Australia (ASX 200)
         "":     "SPY",      # default for US-listed tickers (no suffix)
     },
+    # Feishu custom bot notification. Push is attempted only when enabled and
+    # ``feishu_webhook_url`` is configured; ``feishu_secret`` is optional.
+    "feishu_enabled": True,
+    "feishu_webhook_url": os.getenv("TRADINGAGENTS_FEISHU_WEBHOOK_URL"),
+    "feishu_secret": os.getenv("TRADINGAGENTS_FEISHU_SECRET"),
 })

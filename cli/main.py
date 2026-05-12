@@ -22,6 +22,7 @@ from rich.rule import Rule
 
 from tradingagents.graph.trading_graph import TradingAgentsGraph
 from tradingagents.default_config import DEFAULT_CONFIG
+from tradingagents.notifications.feishu import is_feishu_configured, push_feishu_result
 from cli.models import AnalystType
 from cli.utils import *
 from cli.announcements import fetch_announcements, display_announcements
@@ -1210,6 +1211,13 @@ def run_analysis(checkpoint: bool = False):
 
     # Post-analysis prompts (outside Live context for clean interaction)
     console.print("\n[bold cyan]Analysis Complete![/bold cyan]\n")
+
+    if is_feishu_configured(config):
+        pushed = push_feishu_result(config, final_state, decision, log_path=log_file)
+        if pushed:
+            console.print("[green]✓ Result pushed to Feishu.[/green]")
+        else:
+            console.print("[yellow]Feishu push was configured but did not succeed. Check logs for details.[/yellow]")
 
     # Prompt to save report
     save_choice = typer.prompt("Save report?", default="Y").strip().upper()

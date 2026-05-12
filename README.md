@@ -185,6 +185,18 @@ An interface will appear showing results as they load, letting you track the age
   <img src="assets/cli/cli_transaction.png" width="100%" style="display: inline-block; margin: 0 2%;">
 </p>
 
+### Feishu Bot Notifications
+
+TradingAgents can push completed run results to a Feishu custom bot. Create a Feishu bot webhook, then add the webhook URL to your environment or `.env` file:
+
+```bash
+TRADINGAGENTS_FEISHU_WEBHOOK_URL=https://open.feishu.cn/open-apis/bot/v2/hook/your-token
+TRADINGAGENTS_FEISHU_SECRET=optional-signing-secret
+TRADINGAGENTS_FEISHU_ENABLED=true
+```
+
+When the webhook URL is set, both the CLI and `TradingAgentsGraph.propagate()` send a concise completion message with ticker, date, parsed decision, and the final portfolio decision. Set `TRADINGAGENTS_FEISHU_ENABLED=false` to disable the push without removing the webhook.
+
 ## TradingAgents Package
 
 ### Implementation Details
@@ -274,4 +286,5 @@ Please reference our work if you find *TradingAgents* provides you with some hel
       url={https://arxiv.org/abs/2412.20138}, 
 }
 ```
-test
+
+新增飞书机器人推送

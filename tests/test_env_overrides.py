@@ -36,12 +36,16 @@ def test_string_overrides(monkeypatch):
         TRADINGAGENTS_QUICK_THINK_LLM="gemini-3-flash-preview",
         TRADINGAGENTS_LLM_BACKEND_URL="https://example.invalid/v1",
         TRADINGAGENTS_OUTPUT_LANGUAGE="Chinese",
+        TRADINGAGENTS_FEISHU_WEBHOOK_URL="https://example.invalid/hook",
+        TRADINGAGENTS_FEISHU_SECRET="secret",
     )
     assert dc.DEFAULT_CONFIG["llm_provider"] == "google"
     assert dc.DEFAULT_CONFIG["deep_think_llm"] == "gemini-3-pro-preview"
     assert dc.DEFAULT_CONFIG["quick_think_llm"] == "gemini-3-flash-preview"
     assert dc.DEFAULT_CONFIG["backend_url"] == "https://example.invalid/v1"
     assert dc.DEFAULT_CONFIG["output_language"] == "Chinese"
+    assert dc.DEFAULT_CONFIG["feishu_webhook_url"] == "https://example.invalid/hook"
+    assert dc.DEFAULT_CONFIG["feishu_secret"] == "secret"
 
 
 def test_int_coercion(monkeypatch):
@@ -66,6 +70,11 @@ def test_int_coercion(monkeypatch):
 def test_bool_coercion(monkeypatch, raw, expected):
     dc = _reload_with_env(monkeypatch, TRADINGAGENTS_CHECKPOINT_ENABLED=raw)
     assert dc.DEFAULT_CONFIG["checkpoint_enabled"] is expected
+
+
+def test_feishu_enabled_bool_coercion(monkeypatch):
+    dc = _reload_with_env(monkeypatch, TRADINGAGENTS_FEISHU_ENABLED="false")
+    assert dc.DEFAULT_CONFIG["feishu_enabled"] is False
 
 
 def test_empty_env_value_is_passthrough(monkeypatch):

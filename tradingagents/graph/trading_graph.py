@@ -25,6 +25,7 @@ from tradingagents.agents.utils.agent_states import (
     RiskDebateState,
 )
 from tradingagents.dataflows.config import set_config
+from tradingagents.notifications.feishu import push_feishu_result
 
 # Import the new abstract tool methods from agent_utils
 from tradingagents.agents.utils.agent_utils import (
@@ -363,7 +364,8 @@ class TradingAgentsGraph:
         self.curr_state = final_state
 
         # Log state to disk.
-        self._log_state(trade_date, final_state)
+        log_path = self._log_state(trade_date, final_state)
+        decision = self.process_signal(final_state["final_trade_decision"])
 
         # Store decision for deferred reflection on the next same-ticker run.
         self.memory_log.store_decision(
@@ -378,7 +380,9 @@ class TradingAgentsGraph:
                 self.config["data_cache_dir"], company_name, str(trade_date)
             )
 
-        return final_state, self.process_signal(final_state["final_trade_decision"])
+        push_feishu_result(self.config, final_state, decision, log_path=log_path)
+
+        return final_state, decision
 
     def _log_state(self, trade_date, final_state):
         """Log the final state to a JSON file."""
@@ -421,6 +425,7 @@ class TradingAgentsGraph:
         log_path = directory / f"full_states_log_{trade_date}.json"
         with open(log_path, "w", encoding="utf-8") as f:
             json.dump(self.log_states_dict[str(trade_date)], f, indent=4)
+        return log_path
 
     def process_signal(self, full_signal):
         """Process a signal to extract the core decision."""
